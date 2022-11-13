@@ -25,5 +25,30 @@
         <button id="btn-resister" type="button">상품등록하기</button>
     
     </div>
+    
+    <script>
+        const createListItem = () => {
+            const $container = document.createElement('section');
+            const $productName = document.createElement('h2');
+            const $price = document.createElement('p');
+            const $stockCount = document.createElement('p');
+            const $btnUpdate = document.createElement('button');
+            const $btnDelete = document.createElement('button');
+
+            $productName.innerText = item.productName;
+            $price.innerText = item.price;
+            $stockCount.innerText = item.stockCount;
+            $btnUpdate.innerText = "수정";
+            $btnDelete.innerText = "삭제";
+
+            $container.appendChild($productName);
+            $container.appendChild($price);
+            $container.appendChild($stockCount);
+            $container.appendChild($btnUpdate);
+            $container.appendChild($btnDelete);
+
+            document.body.appendChild($container);
+        }
+    </script>
 </body>
 </html>
