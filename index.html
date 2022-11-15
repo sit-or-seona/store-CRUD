@@ -27,7 +27,7 @@
     </div>
     
     <script>
-        const createListItem = () => {
+        const createListItem = item => {
             const $container = document.createElement('section');
             const $productName = document.createElement('h2');
             const $price = document.createElement('p');
@@ -48,6 +48,8 @@
             $container.appendChild($btnDelete);
 
             document.body.appendChild($container);
+
+            $btnUpdate.addEventListener('click', () => updateItem($container, $productName, $price, $stockCount, item.id))
         }
 
         // Read
@@ -77,7 +79,7 @@
             }
 
             fetch("http://localhost:3001/product", {
-                method: "CREATE",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(productInfo),
             })
@@ -88,6 +90,64 @@
                 }
             })
         })
+
+        // Update
+        const updateItem = (container, productName, price, stockCount, id)  => {
+            
+            if(event.target.innerText === '수정') {
+                const $updateProductName = document.createElement('input');
+                const $updatePrice = document.createElement('input');
+                const $updateStockCount = document.createElement('input');
+
+                $updateProductName.type = "text";
+                $updatePrice.type = "number";
+                $updateStockCount.type = "number";
+
+                $updateProductName.value = productName.innerText;
+                $updatePrice.value = price.innerText;
+                $updateStockCount.value = stockCount.innerText;
+
+                container.prepend($updateStockCount);
+                container.prepend($updatePrice);
+                container.prepend($updateProductName);
+
+                event.target.innerText = '완료';
+                
+                productName.style = "display: none";
+                price.style = "display: none";
+                stockCount.style = "display: none";
+            } else {
+                const $inputProductName = container.querySelector('input:nth-child(1)')
+                const $inputPrice = container.querySelector('input:nth-child(2)')
+                const $inputStockCount = container.querySelector('input:nth-child(3)')
+                const updateProductInfo = {
+                    productName: $inputProductName.value,
+                    price: $inputPrice.value,
+                    stockCount: $inputStockCount.value,
+                    modDate: new Date().toLocaleDateString().split('. ').join('-').slice(0, -1),
+                }
+                event.target.innerText = '수정';
+
+                fetch(`http://localhost:3001/product/${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updateProductInfo),
+                })
+                .then(() => {
+                    productName.innerText = updateProductInfo.productName;
+                    price.innerText = updateProductInfo.price;
+                    stockCount.innerText = updateProductInfo.stockCount;
+                    
+                    productName.style = "display: block";
+                    price.style = "display: block";
+                    stockCount.style = "display: block";
+                    
+                    $inputProductName.remove();
+                    $inputPrice.remove();
+                    $inputStockCount.remove();
+                })
+            }
+        }
     </script>
 </body>
 </html>
